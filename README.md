@@ -1,75 +1,98 @@
 # Enterprise Document RAG QA System
 
-Source-grounded RAG question answering for synthetic enterprise banking documents, with hybrid retrieval, optional Chroma persistence, optional CrossEncoder reranking, no-answer handling, evaluation, and query logging.
+![CI](https://github.com/2005125xas-star/enterprise-document-rag/actions/workflows/ci.yml/badge.svg)
 
-**Python 3.11+ | Streamlit | RAG | Hybrid Retrieval | Chroma | Optional Reranking | Evaluation | SQLite Logging**
+Source-grounded question answering for synthetic enterprise banking documents, with document ingestion, hybrid retrieval, citations, no-answer handling, query logging, evaluation, optional Chroma persistence, optional CrossEncoder reranking, and OpenAI-compatible LLM support.
 
-The project runs without an OpenAI API key using a deterministic `MockProvider`, and it can switch to OpenAI-compatible providers when an API key is configured.
+**Python 3.11+ | Streamlit | RAG | Hybrid Retrieval | Chroma Optional | Reranker Optional | Evaluation | SQLite Logging**
 
 ## Why This Project Matters
 
-Organizations store policy, compliance, operations, risk, product, and support knowledge across many document formats. A useful enterprise QA system must answer from evidence, show sources, and refuse unsupported questions instead of guessing. This project models that workflow in a local, reproducible portfolio prototype.
+Enterprise teams often need answers from policy, risk, product, operations, and compliance documents. A credible RAG system should retrieve evidence, cite sources, log questions, evaluate retrieval quality, and refuse unsupported questions instead of guessing. This project is a portfolio prototype that demonstrates those engineering patterns locally and reproducibly.
 
 ## More Than A Basic PDF Chatbot
 
-This is not a single-file prompt wrapper. The implementation separates ingestion, chunking, indexing, retrieval, reranking, answer generation, evaluation, logging, and UI orchestration. It includes:
+This is not a single PDF prompt wrapper. Core logic is separated under `src/`, while Streamlit orchestrates ingestion, indexing, retrieval, QA, evaluation, and logs. The system includes metadata-preserving chunking, semantic plus BM25 hybrid retrieval, source-grounded answer generation, explicit no-answer behavior, SQLite logging, a 46-question synthetic benchmark, and tests that do not require real API keys or model downloads.
 
-- Metadata-preserving document chunks.
-- Hybrid retrieval using semantic embeddings and BM25 keyword scoring.
-- Optional local Chroma vector persistence.
-- Optional CrossEncoder reranking after hybrid candidate recall.
-- Explicit no-answer handling when evidence is insufficient.
-- Source citations for every answered response.
-- SQLite query logging for auditability.
-- A 46-question benchmark with retrieval, citation, and no-answer metrics.
-- Tests that run without external model downloads or API keys.
-- Docker and GitHub Actions CI support.
+## Recommended Local Setup
 
-## Quick Start
+Python 3.11 is recommended.
 
-The default configuration is designed for reproducible local use: memory vector store, reranker disabled, and MockProvider when no API key is present.
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python scripts/check_env.py
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
+
+If `python3.11` is unavailable, use the active Python 3.11+ interpreter:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-python -m pytest -q
-python -m src.evaluation.run_eval
-python -m streamlit run app/streamlit_app.py
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-Mock mode note: the project runs without an OpenAI API key using `MockProvider`. This keeps tests, evaluation, and demos reproducible on a clean machine.
+The preferred launch command is:
 
-## Demo Screenshots
+```bash
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
 
-This is a portfolio prototype using synthetic sample documents. When no OpenAI API key is configured, the app runs with `MockProvider` for reproducible local demos.
+`python -m streamlit` helps ensure Streamlit uses the active virtual environment. `--server.fileWatcherType none` can avoid Streamlit watcher issues with optional ML packages, including transformer or torchvision-related import errors.
 
-**Upload and indexing interface**
+## Common Run Modes
 
-![Upload page](outputs/screenshots/upload_page.png)
+Minimal local demo mode uses the mock provider, memory vector store, and no reranker. It requires no API key and is the safest first run:
 
-**Question answering with source-grounded retrieval**
+```bash
+export LLM_PROVIDER=mock
+export VECTOR_STORE=memory
+export RERANKER_ENABLED=false
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
 
-![Ask page](outputs/screenshots/ask_page.png)
+Real LLM mode uses an OpenAI-compatible provider. OpenAI, DeepSeek, and Qwen/DashScope-style APIs are selected through `LLM_BASE_URL` and `LLM_MODEL`.
 
-**Evaluation dashboard with retrieval metrics**
+DeepSeek plus Chroma, with reranker disabled:
 
-![Evaluation page](outputs/screenshots/evaluation_page.png)
+```bash
+export LLM_PROVIDER=openai_compatible
+export LLM_API_KEY=your_deepseek_api_key
+export LLM_BASE_URL=https://api.deepseek.com
+export LLM_MODEL=deepseek-v4-flash
+export VECTOR_STORE=chroma
+export RERANKER_ENABLED=false
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
+
+Reranker enabled:
+
+```bash
+export RERANKER_ENABLED=true
+export RERANKER_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2
+export RERANKER_TOP_N=20
+export RERANKER_FINAL_K=5
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
 
 ## Key Features
 
-- Upload and parse PDF, DOCX, and TXT documents.
+- Upload and parse PDF, DOCX, and TXT files.
 - Preserve `file_name`, `document_id`, `page_number`, `chunk_id`, and character offsets.
 - Clean and chunk document text with overlap.
-- Use a memory vector store by default for reproducible local and CI execution.
-- Optionally persist semantic vectors and chunk metadata locally with Chroma.
-- Use sentence-transformers as the production semantic retrieval path.
-- Use a deterministic hashing embedder in tests and fallback environments.
-- Score keyword evidence with a local BM25 implementation.
-- Merge semantic and keyword scores into hybrid retrieval results.
+- Use sentence-transformers for semantic retrieval when available.
+- Use a deterministic hashing embedder as a fallback and in tests.
+- Score keyword evidence with BM25.
+- Merge semantic and BM25 scores for hybrid retrieval.
+- Optionally persist semantic vectors and chunk metadata with Chroma.
 - Optionally rerank hybrid candidates with a CrossEncoder.
-- Generate answers through OpenAI-compatible providers or MockProvider.
-- Return: `I could not find enough evidence in the uploaded documents.` when evidence is weak.
+- Generate answers through `MockProvider` or OpenAI-compatible chat completion APIs.
+- Return `I could not find enough evidence in the uploaded documents.` when evidence is weak.
+- Include source citations in answered responses.
 - Save query logs to SQLite.
 - Run evaluation and generate CSV plus Markdown reports.
 - Provide a Streamlit UI for upload, asking, evaluation, and logs.
@@ -90,15 +113,10 @@ Documents
 -> Logs + Evaluation
 ```
 
-Core application logic lives under `src/`. The Streamlit app in `app/streamlit_app.py` orchestrates these modules but does not implement retrieval or QA logic directly.
-
 ## Folder Structure
 
 ```text
 enterprise-document-rag/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
 ├── app/
 │   └── streamlit_app.py
 ├── configs/
@@ -118,6 +136,8 @@ enterprise-document-rag/
 │   ├── qa/
 │   ├── evaluation/
 │   └── utils/
+├── scripts/
+│   └── check_env.py
 ├── tests/
 ├── outputs/
 │   ├── eval_results.csv
@@ -127,142 +147,71 @@ enterprise-document-rag/
 ├── README.md
 ├── PORTFOLIO_SUMMARY.md
 ├── requirements.txt
-├── .dockerignore
 ├── .env.example
+├── .dockerignore
 ├── .gitignore
 └── Makefile
 ```
 
-## Setup
+`data/vector_store/` is generated local state and is gitignored.
 
-Python 3.11+ is recommended.
+## Use A Real LLM Provider
 
-```bash
-make install
-cp .env.example .env
-```
+The app supports OpenAI-compatible chat completion APIs. Configuration priority is environment variables, then `configs/config.yaml`, then internal defaults.
 
-`make install` is a convenience wrapper around creating `.venv` and installing `requirements.txt`.
+Preferred variables:
 
-Run tests:
+- `LLM_PROVIDER`
+- `LLM_API_KEY`
+- `LLM_BASE_URL`
+- `LLM_MODEL`
 
-```bash
-python -m pytest -q
-```
+Backward-compatible OpenAI variables:
 
-Or, if you use the project virtual environment:
+- `OPENAI_API_KEY`
+- `OPENAI_BASE_URL`
 
-```bash
-.venv/bin/python -m pytest -q
-```
-
-## Environment Configuration
-
-Copy the example environment file and edit only what you need:
+OpenAI:
 
 ```bash
-cp .env.example .env
-```
-
-Important defaults:
-
-- `OPENAI_API_KEY=` is empty, so the app uses MockProvider in auto mode.
-- `VECTOR_STORE=memory` keeps local and CI runs reproducible.
-- `RERANKER_ENABLED=false` avoids first-run CrossEncoder downloads.
-- `APP_DEBUG=0` hides raw tracebacks in normal Streamlit use.
-
-Use environment variables when you want to override `configs/config.yaml` without editing the file.
-
-## Run In Mock Mode
-
-Mock mode requires no API key and no external LLM call.
-
-```bash
-unset OPENAI_API_KEY
-export LLM_PROVIDER=mock
-export VECTOR_STORE=memory
-export RERANKER_ENABLED=false
-python -m streamlit run app/streamlit_app.py
-```
-
-If `sentence-transformers` is not installed or the configured model cannot load, the app falls back to the deterministic hashing embedder so the demo can still run locally. Tests always inject local fakes where needed to avoid model downloads.
-
-## Run With OpenAI API
-
-Set your key in the environment or in a local `.env` file that you load before starting the app. Do not commit real keys.
-
-```bash
-export OPENAI_API_KEY="your-key-here"
-export LLM_PROVIDER=auto
-python -m streamlit run app/streamlit_app.py
-```
-
-With `qa.provider: auto` in `configs/config.yaml`, the system uses OpenAI when the key is present and MockProvider otherwise. If you want to force OpenAI mode, set `qa.provider: openai` in `configs/config.yaml` or set the provider environment variable accordingly; startup will then require an API key. Do not put any real API key in the repository.
-
-## Run With Docker
-
-Build the image:
-
-```bash
-docker build -t enterprise-document-rag .
-```
-
-Run the app in reproducible mock mode:
-
-```bash
-docker run --rm -p 8501:8501 \
-  -e OPENAI_API_KEY="" \
-  -e LLM_PROVIDER=mock \
-  -e VECTOR_STORE=memory \
-  -e RERANKER_ENABLED=false \
-  enterprise-document-rag
-```
-
-Open the app at `http://localhost:8501`.
-
-To use Chroma persistence in Docker, mount a local directory:
-
-```bash
-mkdir -p data/vector_store
-
-docker run --rm -p 8501:8501 \
-  -e VECTOR_STORE=chroma \
-  -e CHROMA_PERSIST_DIRECTORY=/app/data/vector_store \
-  -v "$PWD/data/vector_store:/app/data/vector_store" \
-  enterprise-document-rag
-```
-
-To use an OpenAI-compatible provider inside Docker, pass the key as an environment variable instead of baking it into the image.
-
-## GitHub Actions CI
-
-The repository includes `.github/workflows/ci.yml`. CI runs on pushes and pull requests to `main`.
-
-CI intentionally sets:
-
-```bash
-LLM_PROVIDER=mock
-VECTOR_STORE=memory
-RERANKER_ENABLED=false
-OPENAI_API_KEY=""
-```
-
-This keeps tests offline, deterministic, and independent of external LLM keys or CrossEncoder model downloads.
-
-## Persistent Vector Store With Chroma
-
-The default vector store backend is `memory`, which preserves the original behavior: uploaded documents are indexed in the running app process and are lost after restart.
-
-To persist indexed chunks and embeddings locally, set the retrieval backend to Chroma:
-
-```bash
-export VECTOR_STORE=chroma
-export CHROMA_PERSIST_DIRECTORY=data/vector_store
-export CHROMA_COLLECTION_NAME=enterprise_document_chunks
+export LLM_PROVIDER=openai_compatible
+export LLM_API_KEY=your_openai_api_key
+export LLM_BASE_URL=https://api.openai.com/v1
+export LLM_MODEL=gpt-4o-mini
 python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
 ```
 
-Equivalent YAML configuration:
+DeepSeek:
+
+```bash
+export LLM_PROVIDER=openai_compatible
+export LLM_API_KEY=your_deepseek_api_key
+export LLM_BASE_URL=https://api.deepseek.com
+export LLM_MODEL=deepseek-v4-flash
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
+
+Qwen / DashScope:
+
+```bash
+export LLM_PROVIDER=openai_compatible
+export LLM_API_KEY=your_dashscope_api_key
+export LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+export LLM_MODEL=qwen-plus
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
+
+Do not commit API keys. Do not paste API keys into screenshots, README files, GitHub issues, or commits. Official provider APIs are recommended over third-party shared or unknown API key resellers.
+
+`MockProvider` is for pipeline testing only. It extracts relevant-looking sentences from retrieved chunks and adds citations, so it does not represent real LLM answer quality.
+
+## Persistent Vector Store With Chroma
+
+The default vector store backend is `memory`, which preserves the simplest local behavior: uploaded documents are indexed in the running app process and are lost after restart.
+
+Chroma is optional. It persists indexed chunks, embeddings, and citation metadata under `data/vector_store/`.
+
+Enable Chroma in `configs/config.yaml`:
 
 ```yaml
 retrieval:
@@ -271,55 +220,80 @@ retrieval:
   collection_name: enterprise_document_chunks
 ```
 
-Chroma stores chunk text, embeddings, and citation metadata under `data/vector_store/`. That directory is gitignored because it is generated local state and can grow quickly. In Chroma mode, the app sidebar shows the active backend, persist directory, collection name, and stored chunk count. It also provides a confirmed clear button for the persistent vector store.
+Or use environment variables:
 
-The app loads stored Chroma chunks on startup and rebuilds BM25 from the saved chunk text, so hybrid retrieval can work after restart without re-uploading documents. Chroma persistence here is local and intended for portfolio/demo use; multi-user or cloud deployments would need a managed vector database or server-backed Chroma setup.
+```bash
+export VECTOR_STORE=chroma
+export CHROMA_PERSIST_DIRECTORY=data/vector_store
+export CHROMA_COLLECTION_NAME=enterprise_document_chunks
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
+
+The app sidebar shows the active vector store, persist directory, collection name, and stored chunk count. It also provides a clear button for the persistent vector store.
+
+Chroma persistence is local. It is not a managed production vector database. Multi-user or cloud deployment would need a managed vector DB or server-backed Chroma deployment.
 
 ## Optional CrossEncoder Reranking
 
-Hybrid retrieval is the default retrieval path and remains enabled in all modes. For higher precision, you can optionally add a second-stage CrossEncoder reranker after hybrid candidate recall:
+Hybrid retrieval remains the default retrieval path. An optional second-stage reranker can improve precision by scoring `(question, chunk_text)` pairs after broad hybrid candidate recall.
 
-```text
-question
--> hybrid retrieval candidate recall, e.g. top_n = 20
--> CrossEncoder scores (question, chunk_text) pairs
--> reranked final_k chunks
--> source-grounded answer generation
-```
-
-Reranking is disabled by default for speed and offline reproducibility. Enable it with environment variables:
-
-```bash
-export RERANKER_ENABLED=true
-export RERANKER_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2
-export RERANKER_TOP_N=20
-export RERANKER_FINAL_K=5
-python -m streamlit run app/streamlit_app.py
-```
-
-Equivalent YAML configuration:
+Default mode is disabled for speed and offline reproducibility:
 
 ```yaml
 retrieval:
   reranker:
-    enabled: true
+    enabled: false
     model: cross-encoder/ms-marco-MiniLM-L-6-v2
     top_n: 20
     final_k: 5
     allow_fallback: true
 ```
 
-`top_n` controls how many hybrid retrieval candidates are sent to the reranker. `final_k` controls how many reranked chunks are returned to the QA pipeline. The recommended starter model is `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+`top_n` is the number of hybrid candidates sent to the reranker. `final_k` is the number of final evidence chunks returned to the LLM.
 
-The first enabled run may download the CrossEncoder model, and CPU inference can be slower than plain hybrid retrieval. If the model cannot be loaded and `allow_fallback: true`, the app falls back to hybrid ranking and shows a sidebar warning. If `allow_fallback: false`, startup raises a clean configuration error.
+The recommended starter model is `cross-encoder/ms-marco-MiniLM-L-6-v2`. First use may download the model, and CPU inference can be slower. If model loading fails and `allow_fallback: true`, the app falls back to hybrid ranking and shows a warning.
+
+## Docker
+
+Build:
+
+```bash
+docker build -t enterprise-document-rag .
+```
+
+Run mock mode:
+
+```bash
+docker run --rm -p 8501:8501 enterprise-document-rag
+```
+
+Run with DeepSeek:
+
+```bash
+docker run --rm -p 8501:8501 \
+  -e LLM_PROVIDER=openai_compatible \
+  -e LLM_API_KEY=your_deepseek_api_key \
+  -e LLM_BASE_URL=https://api.deepseek.com \
+  -e LLM_MODEL=deepseek-v4-flash \
+  enterprise-document-rag
+```
+
+Run with persistent Chroma volume:
+
+```bash
+docker run --rm -p 8501:8501 \
+  -e VECTOR_STORE=chroma \
+  -v "$(pwd)/data/vector_store:/app/data/vector_store" \
+  enterprise-document-rag
+```
+
+The Docker image defaults to safe offline mode: `LLM_PROVIDER=mock`, `VECTOR_STORE=memory`, and `RERANKER_ENABLED=false`.
 
 ## Run Evaluation
 
-The evaluation CLI uses the synthetic benchmark in `data/sample_docs/` and `data/eval/qa_eval_set.csv`. It uses MockProvider and hashing embeddings so it runs without an OpenAI key or model download.
+The evaluation CLI uses the synthetic benchmark in `data/sample_docs/` and `data/eval/qa_eval_set.csv`. It uses mock mode and local embeddings so it can run without a real LLM API key.
 
 ```bash
-export VECTOR_STORE=memory
-export RERANKER_ENABLED=false
 python -m src.evaluation.run_eval
 ```
 
@@ -327,7 +301,7 @@ Outputs:
 
 - `outputs/eval_results.csv`
 - `outputs/evaluation_report.md`
-- `outputs/demo_transcript.md` contains a short mock-mode transcript for quick review.
+- `outputs/demo_transcript.md`
 
 The CSV includes question ID, question type, difficulty, answerability, expected document/page, expected keywords, retrieved chunk IDs, retrieved documents, top score, Hit@3, Hit@5, reciprocal rank, no-answer flag, citation flag, latency, answer preview, and failure reason.
 
@@ -346,8 +320,6 @@ Documents:
 
 The benchmark contains 46 questions across fact lookup, policy lookup, product lookup, numeric thresholds, role responsibilities, cross-document questions, and no-answer cases.
 
-Question distribution:
-
 | Question type | Count |
 | --- | ---: |
 | fact_lookup | 4 |
@@ -358,7 +330,7 @@ Question distribution:
 | cross_document | 6 |
 | no_answer | 5 |
 
-Current local benchmark metrics from `python -m src.evaluation.run_eval`:
+Recent local benchmark metrics:
 
 | Metric | Value |
 | --- | ---: |
@@ -370,13 +342,26 @@ Current local benchmark metrics from `python -m src.evaluation.run_eval`:
 | MRR | 0.9878 |
 | No-answer accuracy | 1.0000 |
 | Citation rate | 1.0000 |
-| Average latency (ms) | ~0.70 |
 
-The report also lists weak examples. In the current baseline, several failures are answer-quality issues where retrieval found the right document but the deterministic MockProvider answer did not include every expected keyword. This is intentional: the project is not only a RAG demo; it includes retrieval evaluation, no-answer testing, and failure analysis.
+Evaluation matters because a RAG project should be judged on retrieval quality, citation behavior, and refusal behavior, not only on fluent-looking answers.
+
+## Demo Screenshots
+
+This is a portfolio prototype using synthetic sample documents. When no LLM API key is configured, the app runs with `MockProvider`.
+
+**Upload and indexing interface**
+
+![Upload page](outputs/screenshots/upload_page.png)
+
+**Question answering with source-grounded retrieval**
+
+![Ask page](outputs/screenshots/ask_page.png)
+
+**Evaluation dashboard with retrieval metrics**
+
+![Evaluation page](outputs/screenshots/evaluation_page.png)
 
 ## Example Questions
-
-After indexing the included synthetic sample documents or your own enterprise documents, try:
 
 - What cap applies to employee referral bonuses?
 - What direct deposit amount waives the Everyday Checking monthly fee?
@@ -386,48 +371,107 @@ After indexing the included synthetic sample documents or your own enterprise do
 
 The last question is intentionally unsupported and should return the no-answer message.
 
-## Evaluation Design
+## Troubleshooting
 
-The evaluation pipeline measures:
+Missing `pypdf`:
 
-- `Hit@3`: whether a relevant chunk or document appears in the top 3 retrieved results.
-- `Hit@5`: whether a relevant chunk or document appears in the top 5 retrieved results.
-- `MRR`: reciprocal rank of the first relevant retrieval result.
-- `No-answer accuracy`: whether unanswerable examples return the no-answer response.
-- `Average latency`: average pipeline latency in milliseconds.
+```bash
+python -m pip install -r requirements.txt
+python -m pip show pypdf
+```
 
-Evaluation matters because a RAG system should be judged on retrieval quality and refusal behavior, not only on whether a demo can produce fluent answers. This project evaluates whether expected documents are retrieved, whether unsupported questions are refused, whether citations are present, and where answer quality is weak.
+Missing `docx` / `python-docx`:
+
+```bash
+python -m pip install -r requirements.txt
+python -m pip show python-docx
+```
+
+Conda `base` and `.venv` both active:
+
+```bash
+conda deactivate
+source .venv/bin/activate
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
+
+Provider stays as `mock`: check that the app was launched from the shell where `LLM_API_KEY`, `LLM_BASE_URL`, and `LLM_MODEL` are exported. Also confirm `LLM_PROVIDER` is not set to `mock`.
+
+Embedding falls back to `hashing-384`: install requirements and allow the configured sentence-transformers model to load. Hashing embeddings are a fallback mode for reproducible local execution.
+
+Streamlit watcher error involving transformers or torchvision:
+
+```bash
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
+
+API key works in a standalone OpenAI SDK test but not in the app: confirm the app is launched from the same shell where the variables are exported, or use a local `.env` file that is never committed.
+
+Safe DeepSeek-style standalone test:
+
+```bash
+export LLM_API_KEY=your_deepseek_api_key
+
+python - <<'PY'
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ.get("LLM_API_KEY"),
+    base_url="https://api.deepseek.com"
+)
+
+response = client.chat.completions.create(
+    model="deepseek-v4-flash",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Say hello in one sentence."}
+    ],
+    stream=False
+)
+
+print(response.choices[0].message.content)
+PY
+```
+
+Model name or base URL errors: verify the provider's documented base URL and exact model name. The app sidebar shows the active provider, backend domain, and model, but never displays API keys.
+
+## What Not To Commit
+
+- `.env`
+- Real API keys or access tokens.
+- `data/vector_store/`
+- Local logs that may contain user questions or private document names.
+- Generated cache directories such as `__pycache__/` and `.pytest_cache/`.
+- Private PDFs, customer documents, or internal enterprise files.
 
 ## Current Limitations
 
-- The default memory vector store is intended for small to medium demo datasets.
-- Chroma persistence is local, not a managed production vector database.
-- CrossEncoder reranking is optional and may be slower on CPU; first enabled use can require a model download.
-- The sample documents are synthetic and contain no confidential data.
-- DOCX page numbers are approximated as page `1` because DOCX files do not store stable rendered page boundaries.
+- Sample documents are synthetic and contain no confidential data.
+- MockProvider is deterministic and useful for testing, but it does not represent real LLM answer quality.
+- Evaluation uses local or fallback embeddings when sentence-transformers is unavailable.
 - TXT files expose only page `1`, so page-level evaluation is limited for the current benchmark.
-- MockProvider is deterministic and useful for testing, but it does not represent final LLM answer quality.
-- Evaluation uses local hashing embeddings if sentence-transformers is unavailable.
-- The benchmark is synthetic and much smaller than a real enterprise knowledge base.
-- Docker packaging is for local demo deployment, not a hardened production container.
+- DOCX page numbers are approximated because DOCX files do not store stable rendered page boundaries.
+- Chroma persistence is local, not a managed production vector database.
+- CrossEncoder reranking can be slower on CPU and may require model download on first use.
 - This is a portfolio prototype, not a production enterprise system.
 
 ## Future Improvements
 
-- Add a real PDF benchmark with stable page-level citations.
-- Add OCR support for scanned documents.
-- Add a managed or server-backed vector database option for deployment.
-- Add an Ollama local model backend for offline answer generation.
-- Add real OpenAI answer quality evaluation with human-reviewed examples.
-- Add a hosted demo deployment target.
-- Add document-level metadata filters such as department, date, or access tier.
-- Add batch ingestion and incremental re-indexing.
-- Add authentication and role-aware retrieval for a more enterprise-like demo.
+- Real PDF benchmark with stable page-level citations.
+- OCR support for scanned documents.
+- Managed vector store option for cloud deployment.
+- Server-backed Chroma deployment.
+- Ollama local model backend for offline answer generation.
+- Real OpenAI answer quality evaluation with human-reviewed examples.
+- Hosted demo deployment.
+- Document-level metadata filters such as department, date, or access tier.
+- Batch ingestion and incremental re-indexing.
+- Authentication and role-aware retrieval.
 
 ## Suggested Resume Bullet Points
 
-- Built an enterprise-style document RAG QA system with PDF, DOCX, and TXT ingestion, metadata-preserving chunking, hybrid semantic/BM25 retrieval, optional CrossEncoder reranking, source-grounded answer generation, and SQLite query logging.
-- Added local Chroma persistence for chunk embeddings and citation metadata while preserving a memory backend for reproducible tests and demos.
-- Implemented no-answer handling and citation validation to reduce unsupported answers in document question answering workflows.
-- Developed an evaluation pipeline measuring Hit@3, Hit@5, MRR, no-answer accuracy, and latency, with reproducible CSV and Markdown reports.
-- Packaged the Streamlit app with Docker and GitHub Actions CI for cleaner setup, testing, and portfolio review.
+- Built an enterprise-style document RAG QA system with PDF, DOCX, and TXT ingestion, metadata-preserving chunking, hybrid semantic/BM25 retrieval, source-grounded answer generation, and SQLite query logging.
+- Added no-answer handling and citation validation to reduce unsupported answers in document question answering workflows.
+- Implemented optional Chroma persistence and optional CrossEncoder reranking while preserving an offline mock mode for reproducible tests.
+- Developed an evaluation pipeline measuring Hit@3, Hit@5, MRR, no-answer accuracy, citation rate, and latency with reproducible CSV and Markdown reports.

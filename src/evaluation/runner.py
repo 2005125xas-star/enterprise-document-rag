@@ -145,7 +145,7 @@ def save_evaluation_outputs(
         "failure_reason",
     ]
     with csv_target.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for item in result.details:
             writer.writerow({key: _format_csv_value(item.get(key)) for key in fieldnames})
