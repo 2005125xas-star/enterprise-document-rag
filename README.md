@@ -35,6 +35,22 @@ streamlit run app/streamlit_app.py
 
 Mock mode note: the project runs without an OpenAI API key using `MockProvider`. This keeps tests, evaluation, and demos reproducible on a clean machine.
 
+## Demo Screenshots
+
+This is a portfolio prototype using synthetic sample documents. When no OpenAI API key is configured, the app runs with `MockProvider` for reproducible local demos.
+
+**Upload and indexing interface**
+
+![Upload page](outputs/screenshots/upload_page.png)
+
+**Question answering with source-grounded retrieval**
+
+![Ask page](outputs/screenshots/ask_page.png)
+
+**Evaluation dashboard with retrieval metrics**
+
+![Evaluation page](outputs/screenshots/evaluation_page.png)
+
 ## Key Features
 
 - Upload and parse PDF, DOCX, and TXT documents.
