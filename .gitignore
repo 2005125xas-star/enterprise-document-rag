@@ -5,6 +5,10 @@ __pycache__/
 .ruff_cache/
 .venv/
 .env
+.DS_Store
+*.sqlite3
+*.db
+*.tmp
 
 data/raw_docs/*
 !data/raw_docs/.gitkeep
@@ -12,4 +16,3 @@ data/processed/*
 !data/processed/.gitkeep
 data/logs/*
 !data/logs/.gitkeep
-

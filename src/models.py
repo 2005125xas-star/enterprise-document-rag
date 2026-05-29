@@ -58,10 +58,15 @@ class EvaluationExample:
 
     question: str
     answerable: bool
+    question_id: str = ""
+    question_type: str = "fact_lookup"
+    difficulty: str = "medium"
     expected_chunk_ids: list[str] = field(default_factory=list)
     expected_document_ids: list[str] = field(default_factory=list)
+    expected_keywords: list[str] = field(default_factory=list)
     expected_page: int | None = None
     expected_answer: str | None = None
+    notes: str = ""
 
 
 @dataclass(frozen=True)
@@ -74,4 +79,9 @@ class EvaluationResult:
     no_answer_accuracy: float
     average_latency_ms: float
     total_examples: int
+    answerable_count: int = 0
+    unanswerable_count: int = 0
+    citation_rate: float = 0.0
+    metrics_by_question_type: dict[str, dict[str, Any]] = field(default_factory=dict)
+    metrics_by_difficulty: dict[str, dict[str, Any]] = field(default_factory=dict)
     details: list[dict[str, Any]] = field(default_factory=list)

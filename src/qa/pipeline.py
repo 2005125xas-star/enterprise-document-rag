@@ -6,6 +6,7 @@ import time
 from src.llm.providers import LLMProvider
 from src.models import AnswerResult, RetrievalResult
 from src.retrieval.hybrid import HybridRetriever
+from src.utils.text import tokenize
 from src.utils.query_logger import QueryLogger
 
 
@@ -20,6 +21,7 @@ class QAPipeline:
         max_context_chunks: int = 5,
         min_score: float = 0.12,
         semantic_evidence_threshold: float = 0.28,
+        lexical_overlap_threshold: int = 3,
         insufficient_evidence_message: str = DEFAULT_INSUFFICIENT_EVIDENCE_MESSAGE,
         logger: QueryLogger | None = None,
     ) -> None:
@@ -28,6 +30,7 @@ class QAPipeline:
         self.max_context_chunks = max_context_chunks
         self.min_score = min_score
         self.semantic_evidence_threshold = semantic_evidence_threshold
+        self.lexical_overlap_threshold = lexical_overlap_threshold
         self.insufficient_evidence_message = insufficient_evidence_message
         self.logger = logger
 
@@ -36,7 +39,7 @@ class QAPipeline:
         retrieval_results = self.retriever.search(question, top_k=top_k or self.max_context_chunks)
         evidence = retrieval_results[: self.max_context_chunks]
 
-        if not self._has_sufficient_evidence(evidence):
+        if not self._has_sufficient_evidence(question, evidence):
             result = AnswerResult(
                 answer=self.insufficient_evidence_message,
                 citations=[],
@@ -68,13 +71,17 @@ class QAPipeline:
         self._log(question, result, session_id)
         return result
 
-    def _has_sufficient_evidence(self, evidence: list[RetrievalResult]) -> bool:
+    def _has_sufficient_evidence(self, question: str, evidence: list[RetrievalResult]) -> bool:
         if not evidence:
             return False
         best = evidence[0]
         if best.score < self.min_score:
             return False
-        return best.keyword_score > 0.0 or best.semantic_score >= self.semantic_evidence_threshold
+        query_terms = set(tokenize(question))
+        chunk_terms = set(tokenize(best.chunk.text))
+        lexical_overlap = len(query_terms.intersection(chunk_terms))
+        has_keyword_evidence = best.keyword_score > 0.0 and lexical_overlap >= self.lexical_overlap_threshold
+        return has_keyword_evidence or best.semantic_score >= self.semantic_evidence_threshold
 
     def _log(self, question: str, result: AnswerResult, session_id: str | None) -> None:
         if self.logger is not None:

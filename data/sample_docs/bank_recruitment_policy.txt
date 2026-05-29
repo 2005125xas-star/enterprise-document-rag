@@ -1,0 +1,34 @@
+Bank Recruitment and Workforce Policy
+Synthetic evaluation document. No confidential data.
+
+1. Purpose and Scope
+1.1 This policy governs hiring for branch, operations, technology, compliance, and risk teams at Northstar Retail Bank.
+1.2 The policy is effective 2026-01-01 and applies to permanent employees, fixed-term employees, and paid interns.
+1.3 Hiring managers must use the WorkPath requisition system for every role before contacting candidates.
+
+2. Requisition Approval
+2.1 A hiring manager opens the requisition and attaches the approved department budget code.
+2.2 Talent Acquisition validates the job family, salary band, and interview plan within three business days.
+2.3 Finance Business Partner approval is required when the annual base salary is above 120,000 USD.
+2.4 The Chief People Officer must approve exceptions to salary bands, location rules, or job grade changes.
+
+3. Candidate Screening and Interviews
+3.1 The interview slate must include at least three qualified candidates unless Talent Acquisition documents a scarce-skill exception.
+3.2 Branch Advisor B2 roles use a salary range of 52,000 to 68,000 USD.
+3.3 Risk Analyst B3 roles use a salary range of 78,000 to 96,000 USD.
+3.4 Every candidate for a customer-facing role must complete a conduct attestation before the final interview.
+3.5 Interview feedback must be entered in WorkPath within two business days after the interview.
+
+4. Background Checks and Start Dates
+4.1 HR Operations owns background checks and employment eligibility verification.
+4.2 Customer-facing and risk roles require criminal history, employment history, and sanctions screening.
+4.3 A new hire may not access production banking systems until HR Operations marks the background check as cleared.
+4.4 Standard start dates are the first and third Monday of each month.
+
+5. Probation, Referrals, and Exceptions
+5.1 The probationary period is 90 calendar days for branch and operations roles.
+5.2 The probationary period is 120 calendar days for risk, compliance, and model governance roles.
+5.3 Employee referral bonuses are capped at 2,000 USD and are paid after the new hire completes 180 days of employment.
+5.4 Referral bonuses are not paid for interns, executive roles, or candidates already in the applicant tracking system.
+5.5 Policy exceptions require written approval from the Chief People Officer and must be retained for seven years.
+

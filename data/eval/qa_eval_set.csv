@@ -1,0 +1,47 @@
+question_id,question,question_type,expected_doc,expected_page,expected_keywords,answerable,difficulty,notes
+Q001,What system must hiring managers use before contacting candidates?,fact_lookup,bank_recruitment_policy,1,WorkPath|requisition,true,easy,single document recruitment fact
+Q002,What is the effective date of the recruitment policy?,fact_lookup,bank_recruitment_policy,1,2026-01-01,true,easy,date lookup
+Q003,Who validates the job family and interview plan for a requisition?,role_responsibility,bank_recruitment_policy,1,Talent Acquisition,true,easy,recruiting responsibility
+Q004,What salary range applies to Branch Advisor B2 roles?,numeric_threshold,bank_recruitment_policy,1,"52,000|68,000",true,medium,salary threshold
+Q005,How long is probation for risk and compliance roles?,policy_lookup,bank_recruitment_policy,1,120 calendar days,true,easy,probation policy
+Q006,What cap applies to employee referral bonuses?,numeric_threshold,bank_recruitment_policy,1,"2,000 USD",true,easy,referral cap
+Q007,Who approves exceptions to salary bands or job grade changes?,role_responsibility,bank_recruitment_policy,1,Chief People Officer,true,medium,exception owner
+Q008,What is the minimum opening deposit for Everyday Checking?,product_lookup,retail_banking_product_guide,1,25 USD,true,easy,checking product fact
+Q009,What direct deposit amount waives the Everyday Checking monthly fee?,numeric_threshold,retail_banking_product_guide,1,500 USD,true,easy,fee waiver threshold
+Q010,At what average collected balance is the Everyday Checking fee waived?,numeric_threshold,retail_banking_product_guide,1,"1,500 USD",true,easy,balance threshold
+Q011,What age range is eligible for Student Start Checking?,product_lookup,retail_banking_product_guide,1,16 through 24,true,easy,student product eligibility
+Q012,Who must receive rate exception requests for Premier Savings?,role_responsibility,retail_banking_product_guide,1,Retail Product Management,true,medium,product exception owner
+Q013,What cash deposit level triggers enhanced review for the Small Business Operating Account?,numeric_threshold,retail_banking_product_guide,1,"25,000 USD",true,medium,business account threshold
+Q014,What risk grades does the bank assign?,fact_lookup,credit_risk_policy_summary,1,A|B|C|D|Watch,true,easy,risk grade list
+Q015,What minimum credit score is required for an unsecured personal loan?,numeric_threshold,credit_risk_policy_summary,1,660,true,easy,credit score floor
+Q016,What is the maximum debt-to-income ratio for unsecured personal loans?,numeric_threshold,credit_risk_policy_summary,1,42 percent,true,easy,dti limit
+Q017,What DSCR is required for small business term loans?,numeric_threshold,credit_risk_policy_summary,1,1.25,true,easy,dscr requirement
+Q018,Who approves portfolio exposure exceptions at or above 5 percent?,role_responsibility,credit_risk_policy_summary,1,Chief Credit Officer,true,medium,credit exception owner
+Q019,How quickly must watchlist reviews be completed after a trigger?,policy_lookup,credit_risk_policy_summary,1,10 business days,true,medium,watchlist timing
+Q020,Which data classification includes customer Social Security numbers?,policy_lookup,data_security_policy,1,Restricted,true,easy,data classification
+Q021,What encryption standard is required for Restricted data at rest?,policy_lookup,data_security_policy,1,AES-256,true,easy,encryption control
+Q022,How often must privileged access be reviewed?,numeric_threshold,data_security_policy,1,30 days,true,easy,access review cadence
+Q023,Who owns privacy notification assessment?,role_responsibility,data_security_policy,1,Data Protection Officer,true,easy,privacy role
+Q024,How quickly must critical security incidents be reported to the CISO?,numeric_threshold,data_security_policy,1,30 minutes,true,medium,incident threshold
+Q025,How long are security event logs retained?,policy_lookup,data_security_policy,1,two years,true,easy,log retention
+Q026,Who must open the vault under dual control?,role_responsibility,branch_operations_manual,1,Branch Manager|Senior Teller,true,easy,branch dual control
+Q027,What is the teller cash drawer limit?,numeric_threshold,branch_operations_manual,1,"10,000 USD",true,easy,cash limit
+Q028,When must night deposit bags be processed?,policy_lookup,branch_operations_manual,1,10:00 a.m.|next business day,true,medium,branch timing
+Q029,What cash transaction level requires a Currency Transaction Report?,numeric_threshold,branch_operations_manual,1,"above 10,000 USD",true,easy,ctr threshold
+Q030,Where must customer complaints be logged?,fact_lookup,branch_operations_manual,1,C360,true,easy,complaint system
+Q031,Who approves customer-facing claims before a campaign launches?,role_responsibility,customer_marketing_campaign_guide,1,Compliance Marketing Review,true,easy,marketing approval
+Q032,What is the campaign code for Spring Direct Deposit Bonus 2026?,product_lookup,customer_marketing_campaign_guide,1,DDB150-26,true,easy,campaign code
+Q033,How much is the Spring Direct Deposit Bonus?,numeric_threshold,customer_marketing_campaign_guide,1,150 USD,true,easy,bonus amount
+Q034,What qualifying direct deposit total is required for the bonus campaign?,numeric_threshold,customer_marketing_campaign_guide,1,"1,000 USD|60 days",true,medium,campaign threshold
+Q035,What is the campaign code for Premier Savings Accelerator?,product_lookup,customer_marketing_campaign_guide,1,PSA025-26,true,easy,campaign code
+Q036,Which policy requires AES-256 for Restricted data and who handles customer-facing marketing claims?,cross_document,data_security_policy|customer_marketing_campaign_guide,1,AES-256|Compliance Marketing Review,true,hard,cross document security and marketing
+Q037,Compare the direct deposit amount that waives checking fees with the bonus campaign deposit total.,cross_document,retail_banking_product_guide|customer_marketing_campaign_guide,1,"500 USD|1,000 USD",true,hard,cross document product and campaign thresholds
+Q038,Which documents mention C360 and what workflows use it?,cross_document,branch_operations_manual|customer_marketing_campaign_guide,1,C360|complaints,true,hard,cross document complaint handling
+Q039,Which roles approve hiring exceptions and credit exposure exceptions above 5 percent?,cross_document,bank_recruitment_policy|credit_risk_policy_summary,1,Chief People Officer|Chief Credit Officer,true,hard,cross document approval roles
+Q040,Which rules involve 90 days in workforce policy and marketing campaigns?,cross_document,bank_recruitment_policy|customer_marketing_campaign_guide,1,90 calendar days|90 days,true,hard,cross document time period
+Q041,Which policies set requirements for Restricted data access and branch vault dual control?,cross_document,data_security_policy|branch_operations_manual,1,Restricted data|dual control,true,hard,cross document operations and security
+Q042,What is the bank's cryptocurrency custody product code?,no_answer,, , ,false,medium,unsupported product
+Q043,What cafeteria meal subsidy is available to branch employees?,no_answer,, , ,false,medium,unsupported employee benefit
+Q044,What is the treasury wire transfer cutoff time for corporate clients?,no_answer,, , ,false,medium,unsupported operations policy
+Q045,What mortgage escrow analysis cycle is used for home loans?,no_answer,, , ,false,medium,unsupported mortgage policy
+Q046,What charitable donation matching percentage does the bank offer?,no_answer,, , ,false,medium,unsupported HR benefit

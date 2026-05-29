@@ -1,0 +1,30 @@
+Credit Risk Policy Summary
+Synthetic evaluation document. No confidential data.
+
+1. Credit Risk Framework
+1.1 Northstar Retail Bank assigns credit risk grades A, B, C, D, and Watch.
+1.2 Grade A means low expected loss, grade B means moderate expected loss, grade C means elevated expected loss, and grade D means high expected loss.
+1.3 Watch status is used when payment behavior or collateral values require enhanced monitoring.
+1.4 The Credit Risk Committee reviews portfolio trends every quarter.
+
+2. Unsecured Personal Loans
+2.1 The minimum bureau credit score for an unsecured personal loan is 660.
+2.2 The maximum debt-to-income ratio is 42 percent.
+2.3 Total unsecured personal loan exposure to one borrower may not exceed 75,000 USD.
+2.4 Exceptions to the credit score floor require Credit Risk Director approval.
+2.5 Loans with verified fraud indicators must be declined regardless of score.
+
+3. Small Business Term Loans
+3.1 Small business term loans require a debt service coverage ratio of at least 1.25.
+3.2 The maximum loan-to-value ratio for owner-occupied commercial property collateral is 80 percent.
+3.3 Borrowers must have risk grade B or better at origination.
+3.4 Industry concentration above 18 percent in a single NAICS segment requires Credit Risk Committee review.
+3.5 Environmental collateral issues must be escalated to the Collateral Risk Manager.
+
+4. Reviews, Watchlist, and Exceptions
+4.1 Watchlist reviews must be completed within 10 business days after a triggering event.
+4.2 A triggering event includes 30 days past due, covenant breach, bankruptcy filing, or confirmed fraud investigation.
+4.3 Exceptions below 5 percent of portfolio exposure may be approved by the Credit Risk Director.
+4.4 Exceptions at or above 5 percent of portfolio exposure require Chief Credit Officer approval.
+4.5 Model validation findings rated high must be remediated within 90 calendar days.
+
