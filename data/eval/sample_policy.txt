@@ -1,0 +1,7 @@
+Enterprise Customer Records Policy
+
+Customer records must be retained for seven years after account closure. The retention schedule applies to contracts, invoices, and support tickets.
+
+Backup Security Standard
+
+Operational backups are encrypted at rest and reviewed every quarter. Access to backup archives requires approval from the security team.

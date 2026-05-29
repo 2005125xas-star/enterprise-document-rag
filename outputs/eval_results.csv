@@ -1,0 +1,8 @@
+question,answerable,expected_doc,expected_page,retrieved_chunk_ids,top_score,hit_at_3,hit_at_5,reciprocal_rank,returned_no_answer,latency,answer
+How long are customer records retained?,True,sample-policy,1,sample-policy:p1:c1,0.5978101767904827,1.0,1.0,1.0,False,0.2,"Based on the uploaded documents, Enterprise Customer Records Policy
+
+Customer records must be retained for seven years after account closure. [1]"
+How are backups protected?,True,sample-policy,1,sample-policy:p1:c1,0.4200913025822349,1.0,1.0,1.0,False,0.11,"Based on the uploaded documents, Backup Security Standard
+
+Operational backups are encrypted at rest and reviewed every quarter. [1]"
+quantum asteroid orbit,False,,,,,0.0,0.0,0.0,True,0.07,I could not find enough evidence in the uploaded documents.
