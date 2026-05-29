@@ -197,6 +197,43 @@ export CHROMA_PERSIST_DIRECTORY=data/vector_store
 export CHROMA_COLLECTION_NAME=enterprise_document_chunks
 ```
 
+## Optional CrossEncoder Reranking
+
+Hybrid retrieval is the default retrieval path and remains enabled in all modes. For higher precision, you can optionally add a second-stage CrossEncoder reranker after hybrid candidate recall:
+
+```text
+question
+-> hybrid retrieval candidate recall, e.g. top_n = 20
+-> CrossEncoder scores (question, chunk_text) pairs
+-> reranked final_k chunks
+-> source-grounded answer generation
+```
+
+Reranking is disabled by default for speed and offline reproducibility. Enable it in `configs/config.yaml`:
+
+```yaml
+retrieval:
+  reranker:
+    enabled: true
+    model: cross-encoder/ms-marco-MiniLM-L-6-v2
+    top_n: 20
+    final_k: 5
+    allow_fallback: true
+```
+
+`top_n` controls how many hybrid retrieval candidates are sent to the reranker. `final_k` controls how many reranked chunks are returned to the QA pipeline. The recommended starter model is `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+
+The first run may download the CrossEncoder model, and CPU inference can be slower than plain hybrid retrieval. If the model cannot be loaded and `allow_fallback: true`, the app falls back to hybrid ranking and shows a sidebar warning. If `allow_fallback: false`, startup raises a clean configuration error.
+
+Optional environment overrides:
+
+```bash
+export RERANKER_ENABLED=true
+export RERANKER_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2
+export RERANKER_TOP_N=20
+export RERANKER_FINAL_K=5
+```
+
 ## Run Evaluation
 
 The evaluation CLI uses the synthetic benchmark in `data/sample_docs/` and `data/eval/qa_eval_set.csv`. It uses MockProvider and hashing embeddings so it runs without an OpenAI key or model download.
@@ -284,6 +321,7 @@ Evaluation matters because a RAG system should be judged on retrieval quality an
 
 - The default local vector index is in memory and intended for small to medium demo datasets.
 - Chroma persistence is local, not a managed production vector database.
+- CrossEncoder reranking is optional and may be slower on CPU; first use can require a model download.
 - The sample documents are synthetic and contain no confidential data.
 - DOCX page numbers are approximated as page `1` because DOCX files do not store stable rendered page boundaries.
 - TXT files expose only page `1`, so page-level evaluation is limited for the current benchmark.

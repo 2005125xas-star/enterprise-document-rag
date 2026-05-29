@@ -19,6 +19,13 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "vector_store": "memory",
         "persist_directory": "data/vector_store",
         "collection_name": "enterprise_document_chunks",
+        "reranker": {
+            "enabled": False,
+            "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+            "top_n": 20,
+            "final_k": 5,
+            "allow_fallback": True,
+        },
     },
     "qa": {
         "provider": "auto",

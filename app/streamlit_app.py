@@ -16,6 +16,7 @@ from src.evaluation.runner import load_examples, save_evaluation_outputs
 from src.indexing.vector_store import VectorStoreConfigurationError
 from src.llm.providers import LLMProviderRequestError, ProviderConfigurationError
 from src.qa.service import EnterpriseRAGSystem
+from src.retrieval.reranker import RerankerConfigurationError
 from src.utils.config import load_config
 
 
@@ -71,6 +72,8 @@ def display_answer(result) -> None:
                     "page_range": page_range,
                     "semantic_score": retrieval.semantic_score,
                     "keyword_score": retrieval.keyword_score,
+                    "hybrid_score": retrieval.hybrid_score if retrieval.hybrid_score is not None else retrieval.score,
+                    "reranker_score": retrieval.rerank_score,
                     "final_score": retrieval.score,
                 }
             )
@@ -101,6 +104,8 @@ def clean_error_message(exc: Exception, fallback_message: str) -> str:
             return MISSING_PROVIDER_KEY_MESSAGE
         return str(exc)
     if isinstance(exc, VectorStoreConfigurationError):
+        return str(exc)
+    if isinstance(exc, RerankerConfigurationError):
         return str(exc)
     if isinstance(exc, LLMProviderRequestError):
         return LLM_REQUEST_FAILED_MESSAGE
@@ -144,6 +149,14 @@ def display_sidebar_status(system: EnterpriseRAGSystem) -> None:
             system.clear_vector_store()
             st.success("Persistent vector store cleared.")
             st.rerun()
+
+    reranker_status = "enabled" if system.reranker_settings["enabled"] else "disabled"
+    st.caption(f"Reranker: {reranker_status}")
+    st.caption(f"Reranker model: {system.reranker_settings['model']}")
+    st.caption(f"Reranker candidates: {system.reranker_settings['top_n']}")
+    st.caption(f"Final sources: {system.reranker_settings['final_k']}")
+    if system.reranker_warning:
+        st.warning(system.reranker_warning)
 
 
 def main() -> None:

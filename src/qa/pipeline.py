@@ -6,6 +6,7 @@ import time
 from src.llm.providers import LLMProvider
 from src.models import AnswerResult, RetrievalResult
 from src.retrieval.hybrid import HybridRetriever
+from src.retrieval.reranker import NoOpReranker, Reranker
 from src.utils.text import tokenize
 from src.utils.query_logger import QueryLogger
 
@@ -24,6 +25,9 @@ class QAPipeline:
         lexical_overlap_threshold: int = 3,
         insufficient_evidence_message: str = DEFAULT_INSUFFICIENT_EVIDENCE_MESSAGE,
         logger: QueryLogger | None = None,
+        reranker: Reranker | None = None,
+        reranker_top_n: int = 20,
+        reranker_final_k: int = 5,
     ) -> None:
         self.retriever = retriever
         self.provider = provider
@@ -33,10 +37,13 @@ class QAPipeline:
         self.lexical_overlap_threshold = lexical_overlap_threshold
         self.insufficient_evidence_message = insufficient_evidence_message
         self.logger = logger
+        self.reranker = reranker or NoOpReranker()
+        self.reranker_top_n = max(reranker_top_n, reranker_final_k)
+        self.reranker_final_k = reranker_final_k
 
     def answer_question(self, question: str, top_k: int | None = None, session_id: str | None = None) -> AnswerResult:
         started = time.perf_counter()
-        retrieval_results = self.retriever.search(question, top_k=top_k or self.max_context_chunks)
+        retrieval_results = self._retrieve(question, top_k=top_k)
         evidence = retrieval_results[: self.max_context_chunks]
 
         if not self._has_sufficient_evidence(question, evidence):
@@ -86,6 +93,14 @@ class QAPipeline:
     def _log(self, question: str, result: AnswerResult, session_id: str | None) -> None:
         if self.logger is not None:
             self.logger.log_query(question=question, result=result, session_id=session_id)
+
+    def _retrieve(self, question: str, top_k: int | None) -> list[RetrievalResult]:
+        if self.reranker.enabled:
+            final_k = self.reranker_final_k
+            candidate_k = max(self.reranker_top_n, final_k)
+            candidates = self.retriever.search(question, top_k=candidate_k)
+            return self.reranker.rerank(question, candidates, final_k=final_k)
+        return self.retriever.search(question, top_k=top_k or self.max_context_chunks)
 
 
 def build_citations(evidence: list[RetrievalResult]) -> list[dict]:

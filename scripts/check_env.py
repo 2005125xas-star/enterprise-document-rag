@@ -24,6 +24,8 @@ def main() -> None:
     print(f"Chroma installed: {_yes_no(result.package_status['chromadb'])}")
     print(f"Configured vector store: {result.vector_store_backend}")
     print(f"Chroma persist directory: {result.chroma_persist_directory}")
+    print(f"Reranker enabled: {_yes_no(result.reranker_enabled)}")
+    print(f"Reranker model: {result.reranker_model}")
     print("Recommended launch command: python -m streamlit run app/streamlit_app.py --server.fileWatcherType none")
 
 

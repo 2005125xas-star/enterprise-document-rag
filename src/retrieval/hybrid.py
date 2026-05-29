@@ -73,6 +73,7 @@ class HybridRetriever:
                     keyword_score=keyword_scores[index],
                     score=score,
                     rank=0,
+                    hybrid_score=score,
                 )
             )
 
@@ -84,6 +85,8 @@ class HybridRetriever:
                 keyword_score=result.keyword_score,
                 score=result.score,
                 rank=rank,
+                hybrid_score=result.hybrid_score if result.hybrid_score is not None else result.score,
+                rerank_score=result.rerank_score,
             )
             for rank, result in enumerate(combined[:top_k], start=1)
         ]

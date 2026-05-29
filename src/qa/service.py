@@ -12,6 +12,7 @@ from src.llm.providers import LLMProvider, create_llm_provider
 from src.models import AnswerResult, DocumentChunk, DocumentPage, EvaluationExample, EvaluationResult
 from src.qa.pipeline import QAPipeline
 from src.retrieval.hybrid import HybridRetriever
+from src.retrieval.reranker import Reranker, create_reranker, resolve_reranker_settings
 from src.utils.query_logger import QueryLogger
 
 
@@ -23,6 +24,7 @@ class EnterpriseRAGSystem:
         config: dict,
         embedding_model: EmbeddingModel | None = None,
         vector_store: VectorStore | None = None,
+        reranker: Reranker | None = None,
         provider: LLMProvider | None = None,
         logger: QueryLogger | None = None,
     ) -> None:
@@ -38,6 +40,9 @@ class EnterpriseRAGSystem:
         self.provider = provider or create_llm_provider(qa_config)
         self.logger = logger or QueryLogger(logging_config["sqlite_path"])
         self.vector_store = vector_store or create_vector_store(retrieval_config)
+        self.reranker_settings = resolve_reranker_settings(retrieval_config.get("reranker", {}))
+        self.reranker = reranker or create_reranker(retrieval_config.get("reranker", {}))
+        self.reranker_warning = getattr(self.reranker, "warning", None)
         self.retriever = HybridRetriever(
             embedding_model=self.embedding_model,
             semantic_weight=float(retrieval_config["semantic_weight"]),
@@ -52,6 +57,9 @@ class EnterpriseRAGSystem:
             min_score=float(retrieval_config["min_score"]),
             insufficient_evidence_message=qa_config["insufficient_evidence_message"],
             logger=self.logger,
+            reranker=self.reranker,
+            reranker_top_n=int(self.reranker_settings["top_n"]),
+            reranker_final_k=int(self.reranker_settings["final_k"]),
         )
         self.pages: list[DocumentPage] = []
         self.chunks: list[DocumentChunk] = self.retriever.load_persisted()

@@ -41,27 +41,27 @@
 | MRR | 0.9878 |
 | No-answer accuracy | 1.0000 |
 | Citation rate | 1.0000 |
-| Average latency (ms) | 1.36 |
+| Average latency (ms) | 1.38 |
 
 ## Metrics By Question Type
 
 | Group | Questions | Answerable | Unanswerable | Hit@3 | Hit@5 | MRR | No-answer accuracy | Citation rate | Avg latency ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| cross_document | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 1.36 |
-| fact_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.53 |
-| no_answer | 5 | 0 | 5 | n/a | n/a | n/a | 1.0000 | 0.0000 | 1.23 |
+| cross_document | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 1.34 |
+| fact_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.50 |
+| no_answer | 5 | 0 | 5 | n/a | n/a | n/a | 1.0000 | 0.0000 | 1.30 |
 | numeric_threshold | 14 | 14 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.36 |
-| policy_lookup | 6 | 6 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.34 |
-| product_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.36 |
-| role_responsibility | 7 | 7 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.38 |
+| policy_lookup | 6 | 6 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.41 |
+| product_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.37 |
+| role_responsibility | 7 | 7 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.42 |
 
 ## Metrics By Difficulty
 
 | Group | Questions | Answerable | Unanswerable | Hit@3 | Hit@5 | MRR | No-answer accuracy | Citation rate | Avg latency ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| easy | 26 | 26 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.39 |
-| hard | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 1.36 |
-| medium | 14 | 9 | 5 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.32 |
+| easy | 26 | 26 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.40 |
+| hard | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 1.34 |
+| medium | 14 | 9 | 5 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.37 |
 
 ## Successful Examples
 

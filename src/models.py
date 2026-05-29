@@ -38,6 +38,8 @@ class RetrievalResult:
     keyword_score: float
     score: float
     rank: int
+    hybrid_score: float | None = None
+    rerank_score: float | None = None
 
 
 @dataclass(frozen=True)
