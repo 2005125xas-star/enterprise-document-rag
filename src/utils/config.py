@@ -16,6 +16,9 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "keyword_weight": 0.35,
         "min_score": 0.12,
         "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "vector_store": "memory",
+        "persist_directory": "data/vector_store",
+        "collection_name": "enterprise_document_chunks",
     },
     "qa": {
         "provider": "auto",

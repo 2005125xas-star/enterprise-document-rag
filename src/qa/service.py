@@ -5,6 +5,7 @@ from typing import Iterable
 
 from src.evaluation.runner import evaluate
 from src.indexing.embeddings import EmbeddingModel, create_embedding_model
+from src.indexing.vector_store import VectorStore, create_vector_store
 from src.ingestion.chunker import chunk_pages
 from src.ingestion.parsers import parse_document
 from src.llm.providers import LLMProvider, create_llm_provider
@@ -21,6 +22,7 @@ class EnterpriseRAGSystem:
         self,
         config: dict,
         embedding_model: EmbeddingModel | None = None,
+        vector_store: VectorStore | None = None,
         provider: LLMProvider | None = None,
         logger: QueryLogger | None = None,
     ) -> None:
@@ -35,11 +37,13 @@ class EnterpriseRAGSystem:
         )
         self.provider = provider or create_llm_provider(qa_config)
         self.logger = logger or QueryLogger(logging_config["sqlite_path"])
+        self.vector_store = vector_store or create_vector_store(retrieval_config)
         self.retriever = HybridRetriever(
             embedding_model=self.embedding_model,
             semantic_weight=float(retrieval_config["semantic_weight"]),
             keyword_weight=float(retrieval_config["keyword_weight"]),
             min_score=float(retrieval_config["min_score"]),
+            vector_store=self.vector_store,
         )
         self.pipeline = QAPipeline(
             retriever=self.retriever,
@@ -50,7 +54,7 @@ class EnterpriseRAGSystem:
             logger=self.logger,
         )
         self.pages: list[DocumentPage] = []
-        self.chunks: list[DocumentChunk] = []
+        self.chunks: list[DocumentChunk] = self.retriever.load_persisted()
 
     def ingest_paths(self, paths: Iterable[str | Path]) -> list[DocumentChunk]:
         chunking_config = self.config["chunking"]
@@ -65,6 +69,7 @@ class EnterpriseRAGSystem:
         self.pages = pages
         self.chunks = chunks
         self.retriever.build(chunks)
+        self.chunks = self.retriever.chunks
         return chunks
 
     def answer(self, question: str, top_k: int | None = None, session_id: str | None = None) -> AnswerResult:
@@ -76,3 +81,10 @@ class EnterpriseRAGSystem:
     def recent_logs(self, limit: int = 50) -> list[dict]:
         return self.logger.list_recent(limit=limit)
 
+    def vector_store_count(self) -> int:
+        return self.vector_store.count()
+
+    def clear_vector_store(self) -> None:
+        self.retriever.clear()
+        self.pages = []
+        self.chunks = []

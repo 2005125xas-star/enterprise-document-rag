@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.evaluation.runner import load_examples, save_evaluation_outputs
+from src.indexing.vector_store import VectorStoreConfigurationError
 from src.llm.providers import LLMProviderRequestError, ProviderConfigurationError
 from src.qa.service import EnterpriseRAGSystem
 from src.utils.config import load_config
@@ -99,6 +100,8 @@ def clean_error_message(exc: Exception, fallback_message: str) -> str:
         if "API_KEY" in str(exc):
             return MISSING_PROVIDER_KEY_MESSAGE
         return str(exc)
+    if isinstance(exc, VectorStoreConfigurationError):
+        return str(exc)
     if isinstance(exc, LLMProviderRequestError):
         return LLM_REQUEST_FAILED_MESSAGE
 
@@ -120,6 +123,7 @@ def show_clean_exception(exc: Exception, fallback_message: str) -> None:
 
 def display_sidebar_status(system: EnterpriseRAGSystem) -> None:
     provider = system.provider
+    vector_store = system.vector_store
     st.caption(f"Embedding: {system.embedding_model.name}")
     st.caption(f"Provider: {getattr(provider, 'name', 'unknown')}")
     st.caption(f"Model: {getattr(provider, 'model', 'unknown')}")
@@ -129,6 +133,17 @@ def display_sidebar_status(system: EnterpriseRAGSystem) -> None:
 
     if getattr(provider, "name", "") == "mock":
         st.warning("MockProvider is for pipeline testing only and does not represent real LLM answer quality.")
+
+    st.caption(f"Vector store: {getattr(vector_store, 'name', 'unknown')}")
+    st.caption(f"Stored chunks: {system.vector_store_count()}")
+    if getattr(vector_store, "name", "") == "chroma":
+        st.caption(f"Chroma directory: {getattr(vector_store, 'persist_directory', 'unknown')}")
+        st.caption(f"Collection: {getattr(vector_store, 'collection_name', 'unknown')}")
+        confirm_clear = st.checkbox("Confirm clear persistent vector store")
+        if st.button("Clear persistent vector store", disabled=not confirm_clear):
+            system.clear_vector_store()
+            st.success("Persistent vector store cleared.")
+            st.rerun()
 
 
 def main() -> None:

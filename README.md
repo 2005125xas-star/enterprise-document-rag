@@ -30,7 +30,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 python -m pytest -q
 python -m src.evaluation.run_eval
-streamlit run app/streamlit_app.py
+python -m streamlit run app/streamlit_app.py
 ```
 
 Mock mode note: the project runs without an OpenAI API key using `MockProvider`. This keeps tests, evaluation, and demos reproducible on a clean machine.
@@ -57,6 +57,7 @@ This is a portfolio prototype using synthetic sample documents. When no OpenAI A
 - Preserve `file_name`, `document_id`, `page_number`, `chunk_id`, and character offsets.
 - Clean and chunk document text with overlap.
 - Build a local in-memory vector index.
+- Optionally persist semantic vectors and chunk metadata locally with Chroma.
 - Use sentence-transformers as the production semantic retrieval path.
 - Use a deterministic hashing embedder in tests and fallback environments.
 - Score keyword evidence with a local BM25 implementation.
@@ -74,7 +75,7 @@ Documents
 -> Parser
 -> Cleaner
 -> Chunker
--> Embedding Index + BM25 Index
+-> Embedding Index (memory or Chroma) + BM25 Index
 -> Hybrid Retriever
 -> Evidence Gate / No-answer Check
 -> LLM Provider
@@ -97,7 +98,8 @@ enterprise-document-rag/
 │   ├── raw_docs/
 │   ├── processed/
 │   ├── eval/
-│   └── logs/
+│   ├── logs/
+│   └── vector_store/
 ├── src/
 │   ├── ingestion/
 │   ├── indexing/
@@ -148,7 +150,7 @@ Mock mode requires no API key and no external LLM call.
 
 ```bash
 unset OPENAI_API_KEY
-streamlit run app/streamlit_app.py
+python -m streamlit run app/streamlit_app.py
 ```
 
 If `sentence-transformers` is not installed or the configured model cannot load, the app falls back to the deterministic hashing embedder so the demo can still run locally. Tests always inject a local test embedder to avoid model downloads.
@@ -159,10 +161,41 @@ Set your key in the environment or in a local `.env` file that you load before s
 
 ```bash
 export OPENAI_API_KEY="your-key-here"
-streamlit run app/streamlit_app.py
+python -m streamlit run app/streamlit_app.py
 ```
 
 With `qa.provider: auto` in `configs/config.yaml`, the system uses OpenAI when the key is present and MockProvider otherwise. If you want to force OpenAI mode, set `qa.provider: openai` in `configs/config.yaml`; startup will then require `OPENAI_API_KEY`. Do not put any real API key in the repository.
+
+## Persistent Vector Store With Chroma
+
+The default vector store backend is `memory`, which preserves the original behavior: uploaded documents are indexed in the running app process and are lost after restart.
+
+To persist indexed chunks and embeddings locally, install requirements and set the retrieval backend to Chroma:
+
+```yaml
+retrieval:
+  vector_store: chroma
+  persist_directory: data/vector_store
+  collection_name: enterprise_document_chunks
+```
+
+Then launch the app:
+
+```bash
+python -m streamlit run app/streamlit_app.py --server.fileWatcherType none
+```
+
+Chroma stores chunk text, embeddings, and citation metadata under `data/vector_store/`. That directory is gitignored because it is generated local state and can grow quickly. In Chroma mode, the app sidebar shows the active backend, persist directory, collection name, and stored chunk count. It also provides a confirmed clear button for the persistent vector store.
+
+The app loads stored Chroma chunks on startup and rebuilds BM25 from the saved chunk text, so hybrid retrieval can work after restart without re-uploading documents. Chroma persistence here is local and intended for portfolio/demo use; multi-user or cloud deployments would need a managed vector database or server-backed Chroma setup.
+
+Environment overrides are also supported:
+
+```bash
+export VECTOR_STORE=chroma
+export CHROMA_PERSIST_DIRECTORY=data/vector_store
+export CHROMA_COLLECTION_NAME=enterprise_document_chunks
+```
 
 ## Run Evaluation
 
@@ -249,7 +282,8 @@ Evaluation matters because a RAG system should be judged on retrieval quality an
 
 ## Current Limitations
 
-- The local vector index is in memory and intended for small to medium demo datasets.
+- The default local vector index is in memory and intended for small to medium demo datasets.
+- Chroma persistence is local, not a managed production vector database.
 - The sample documents are synthetic and contain no confidential data.
 - DOCX page numbers are approximated as page `1` because DOCX files do not store stable rendered page boundaries.
 - TXT files expose only page `1`, so page-level evaluation is limited for the current benchmark.
@@ -263,7 +297,7 @@ Evaluation matters because a RAG system should be judged on retrieval quality an
 
 - Add a real PDF benchmark with stable page-level citations.
 - Add OCR support for scanned documents.
-- Add a persistent vector store such as Chroma or FAISS.
+- Add a managed or server-backed vector database option for deployment.
 - Add an optional reranker after the base retriever is stable.
 - Add an Ollama local model backend for offline answer generation.
 - Add real OpenAI answer quality evaluation with human-reviewed examples.
