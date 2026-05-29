@@ -41,27 +41,27 @@
 | MRR | 0.9878 |
 | No-answer accuracy | 1.0000 |
 | Citation rate | 1.0000 |
-| Average latency (ms) | 0.75 |
+| Average latency (ms) | 0.74 |
 
 ## Metrics By Question Type
 
 | Group | Questions | Answerable | Unanswerable | Hit@3 | Hit@5 | MRR | No-answer accuracy | Citation rate | Avg latency ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| cross_document | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 0.76 |
-| fact_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.79 |
-| no_answer | 5 | 0 | 5 | n/a | n/a | n/a | 1.0000 | 0.0000 | 0.70 |
+| cross_document | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 0.72 |
+| fact_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.83 |
+| no_answer | 5 | 0 | 5 | n/a | n/a | n/a | 1.0000 | 0.0000 | 0.66 |
 | numeric_threshold | 14 | 14 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.75 |
-| policy_lookup | 6 | 6 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.76 |
-| product_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.75 |
-| role_responsibility | 7 | 7 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.76 |
+| policy_lookup | 6 | 6 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.74 |
+| product_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.74 |
+| role_responsibility | 7 | 7 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.77 |
 
 ## Metrics By Difficulty
 
 | Group | Questions | Answerable | Unanswerable | Hit@3 | Hit@5 | MRR | No-answer accuracy | Citation rate | Avg latency ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | easy | 26 | 26 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 0.76 |
-| hard | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 0.76 |
-| medium | 14 | 9 | 5 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.73 |
+| hard | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 0.72 |
+| medium | 14 | 9 | 5 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.72 |
 
 ## Successful Examples
 
