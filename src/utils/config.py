@@ -20,6 +20,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "qa": {
         "provider": "auto",
         "model": "gpt-4o-mini",
+        "base_url": None,
         "temperature": 0.0,
         "max_context_chunks": 5,
         "insufficient_evidence_message": "I could not find enough evidence in the uploaded documents.",
@@ -55,4 +56,3 @@ def load_config(path: str | Path = "configs/config.yaml") -> dict[str, Any]:
     if not isinstance(loaded, dict):
         raise ValueError(f"Config file must contain a YAML mapping: {config_path}")
     return deep_merge(DEFAULT_CONFIG, loaded)
-

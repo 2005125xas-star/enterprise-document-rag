@@ -10,12 +10,12 @@ retrieval:
   embedding_model: sentence-transformers/all-MiniLM-L6-v2
 
 qa:
-  provider: openai
-  model: deepseek-v4-flash
+  provider: auto
+  model: gpt-4o-mini
+  base_url: null
   temperature: 0.0
   max_context_chunks: 5
   insufficient_evidence_message: I could not find enough evidence in the uploaded documents.
 
 logging:
   sqlite_path: data/logs/query_logs.sqlite3
-

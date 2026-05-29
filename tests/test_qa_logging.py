@@ -5,7 +5,7 @@ from pathlib import Path
 from src.indexing.embeddings import HashingEmbeddingModel
 import pytest
 
-from src.llm.providers import MockProvider, create_llm_provider
+from src.llm.providers import MockProvider, ProviderConfigurationError, create_llm_provider
 from src.models import DocumentChunk
 from src.qa.pipeline import DEFAULT_INSUFFICIENT_EVIDENCE_MESSAGE, QAPipeline, validate_citations
 from src.retrieval.hybrid import HybridRetriever
@@ -30,7 +30,11 @@ def _retriever() -> HybridRetriever:
 
 
 def test_create_provider_uses_mock_without_api_key(monkeypatch) -> None:
+    monkeypatch.delenv("LLM_PROVIDER", raising=False)
+    monkeypatch.delenv("LLM_API_KEY", raising=False)
+    monkeypatch.delenv("LLM_BASE_URL", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
 
     provider = create_llm_provider({"provider": "auto"})
 
@@ -38,9 +42,13 @@ def test_create_provider_uses_mock_without_api_key(monkeypatch) -> None:
 
 
 def test_explicit_openai_provider_requires_api_key(monkeypatch) -> None:
+    monkeypatch.delenv("LLM_PROVIDER", raising=False)
+    monkeypatch.delenv("LLM_API_KEY", raising=False)
+    monkeypatch.delenv("LLM_BASE_URL", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
 
-    with pytest.raises(RuntimeError, match="OPENAI_API_KEY"):
+    with pytest.raises(ProviderConfigurationError, match="OPENAI_API_KEY"):
         create_llm_provider({"provider": "openai"})
 
 
