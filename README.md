@@ -375,13 +375,23 @@ Only place publicly available documents here. Do not upload private coursework, 
 
 The intended source registry includes public policy documents from UCL and the University of Liverpool, such as UCL Academic Manual chapters and Liverpool assessment, academic integrity, and attendance policies. Verify official URLs in `data/public_eval/public_sources.yaml` before downloading. If a source URL is marked `TODO_OFFICIAL_URL`, fill it from the official university website before use.
 
-Public documents are not committed by default. Prefer downloading official public PDFs or converting official public web pages to TXT locally, then saving them with the listed `local_filename` values under `data/public_docs/`.
+Public documents are not committed by default. Prefer downloading official public PDFs with the helper script, or manually placing verified public files under `data/public_docs/` with the listed `local_filename` values.
 
-Run public evaluation:
+## Download Public Demo Documents
+
+Download the official public demo PDFs:
+
+```bash
+python scripts/download_public_docs.py
+```
+
+Then run public evaluation:
 
 ```bash
 python -m src.evaluation.run_public_eval
 ```
+
+Downloaded PDFs remain ignored by `.gitignore` because they are local evaluation artifacts. The downloader skips files that already exist unless `--force` is passed.
 
 If no supported public documents are present, the runner exits cleanly with instructions and does not fabricate results. If some expected files are missing, it reports the missing `local_filename` values and continues with any supported documents that are present.
 

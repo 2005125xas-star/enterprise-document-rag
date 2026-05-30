@@ -7,6 +7,7 @@ __pycache__/
 .env
 data/vector_store/
 data/public_docs/*
+!data/public_docs/README.md
 outputs/
 *.pyc
 .DS_Store

@@ -19,3 +19,4 @@ data/logs/*
 data/vector_store/
 data/public_docs/*
 !data/public_docs/.gitkeep
+!data/public_docs/README.md

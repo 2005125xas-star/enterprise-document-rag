@@ -4,7 +4,7 @@ sources:
     institution: "University College London"
     year: "2025-26"
     document_type: "academic_policy"
-    official_source_url: "https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes"
+    official_source_url: "https://www.ucl.ac.uk/study/sites/study/files/4a-assessment_regulations_for_taught_programmes_2025-26_clean.pdf"
     local_filename: "ucl_chapter_4_assessment_framework_2025_26.pdf"
     notes: "Use the official UCL Academic Manual page. Download only the public document or convert the public page to TXT; do not use private course materials."
   - source_id: ucl_student_recruitment_admissions_2025_26
@@ -12,7 +12,7 @@ sources:
     institution: "University College London"
     year: "2025-26"
     document_type: "academic_policy"
-    official_source_url: "https://www.ucl.ac.uk/academic-manual/chapters/chapter-1-student-recruitment-and-admissions"
+    official_source_url: "https://www.ucl.ac.uk/study/sites/study/files/chapter_1_student_recruitment_and_admissions_2025-26.pdf"
     local_filename: "ucl_chapter_1_student_recruitment_admissions_2025_26.pdf"
     notes: "Use the official UCL Academic Manual page. Download only the public document or convert the public page to TXT; do not use private course materials."
   - source_id: liverpool_code_of_practice_assessment_2025_26
@@ -20,7 +20,7 @@ sources:
     institution: "University of Liverpool"
     year: "2025-26"
     document_type: "code_of_practice"
-    official_source_url: "https://www.liverpool.ac.uk/aqsd/academic-codes-of-practice/code-of-practice-on-assessment/"
+    official_source_url: "https://www.liverpool.ac.uk/media/livacuk/tqsd/code-of-practice-on-assessment/code_of_practice_on_assessment.pdf"
     local_filename: "liverpool_code_of_practice_on_assessment_2025_26.pdf"
     notes: "Use the official University of Liverpool Code of Practice on Assessment page and its public 2025-26 PDF."
   - source_id: liverpool_academic_integrity_policy_2025_26
@@ -28,7 +28,7 @@ sources:
     institution: "University of Liverpool"
     year: "2025-26"
     document_type: "academic_policy"
-    official_source_url: "https://www.liverpool.ac.uk/aqsd/academic-codes-of-practice/code-of-practice-on-assessment/"
+    official_source_url: "https://www.liverpool.ac.uk/media/livacuk/tqsd/code-of-practice-on-assessment/appendix_L_cop_assess.pdf"
     local_filename: "liverpool_academic_integrity_policy_2025_26.pdf"
     notes: "Academic Integrity Policy is listed as an appendix to the official Code of Practice on Assessment. Verify the current appendix PDF before local use."
   - source_id: liverpool_student_attendance_policy_2025_26
@@ -36,6 +36,6 @@ sources:
     institution: "University of Liverpool"
     year: "2025-26"
     document_type: "student_policy"
-    official_source_url: "https://www.liverpool.ac.uk/student-administration-and-support-division/student-attendance/"
+    official_source_url: "https://www.liverpool.ac.uk/media/livacuk/student-administration/sas/studentadministration/attendance/StudentAttendancePolicy-REVISEDJUL2025%2Cv1.3.pdf"
     local_filename: "liverpool_student_attendance_policy_2025_26.pdf"
     notes: "Use the official University of Liverpool Student Attendance Policy page and its public policy document. Do not use internal student portal copies."
