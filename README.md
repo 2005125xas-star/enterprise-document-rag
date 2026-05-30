@@ -1,6 +1,6 @@
 # Enterprise Document RAG QA System
 
-![CI](https://github.com/2005125xas-star/enterprise-document-rag/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/2005125xas-star/enterprise-document-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/2005125xas-star/enterprise-document-rag/actions/workflows/ci.yml)
 
 Source-grounded question answering for synthetic enterprise banking documents and a public university policy demo path, with document ingestion, hybrid retrieval, citations, no-answer handling, query logging, evaluation, optional Chroma persistence, optional CrossEncoder reranking, and OpenAI-compatible LLM support.
 
