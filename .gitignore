@@ -17,3 +17,5 @@ data/processed/*
 data/logs/*
 !data/logs/.gitkeep
 data/vector_store/
+data/public_docs/*
+!data/public_docs/.gitkeep

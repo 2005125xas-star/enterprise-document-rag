@@ -2,48 +2,46 @@
 
 ## 3-Sentence Summary
 
-Enterprise Document RAG QA System is a local, source-grounded question-answering prototype for synthetic banking and enterprise operations documents. It ingests PDF, DOCX, and TXT files, preserves metadata, chunks documents, performs hybrid semantic/BM25 retrieval, generates cited answers, refuses unsupported questions, logs queries, and evaluates retrieval/no-answer behavior. The project is built to demonstrate practical AI engineering judgment rather than a toy single-PDF chatbot.
+Enterprise Document RAG QA System is a Streamlit-based RAG portfolio prototype for source-grounded question answering over enterprise-style documents. It supports a reproducible synthetic banking benchmark and a public-document demo path for official university policy documents supplied locally by the user. The project demonstrates ingestion, metadata-preserving chunking, hybrid retrieval, citations, no-answer handling, SQLite logging, optional Chroma persistence, optional CrossEncoder reranking, and configurable OpenAI-compatible LLM backends.
 
 ## Problem Statement
 
-Enterprise teams need answers from policy, product, risk, security, branch operations, and marketing documents, but they also need traceability and refusal behavior when evidence is missing. This project shows how to build and evaluate a small but realistic document QA workflow with citations and audit logs.
+Real document QA systems need traceability, refusal behavior, repeatable evaluation, and careful source handling. This project shows how to build and test a small but realistic RAG workflow without relying on private documents, API keys, or fabricated results.
 
 ## Technical Highlights
 
-- Metadata-preserving ingestion for PDF, DOCX, and TXT documents.
-- Dataclass-based core models for pages, chunks, retrieval results, answers, and evaluation records.
-- Hybrid retrieval with sentence-transformers as the production path and BM25 keyword scoring.
-- Deterministic hashing embedder and MockProvider for API-free testing and demos.
-- Evidence gate for no-answer handling.
-- SQLite query logging.
-- Streamlit interface separated from backend retrieval and QA logic.
+- PDF, DOCX, and TXT ingestion with page, file, document, chunk, and character-offset metadata.
+- Hybrid semantic/BM25 retrieval with deterministic fallback embeddings for offline tests.
+- MockProvider for CI and local pipeline testing, plus OpenAI-compatible provider support for OpenAI, DeepSeek, and Qwen-style APIs.
+- Optional local Chroma vector persistence and optional CrossEncoder reranking, both disabled by default for reproducibility.
+- Source-grounded citations, insufficient-evidence refusal, and SQLite query logging.
+- Streamlit app that orchestrates backend modules without embedding retrieval or QA logic directly in UI code.
 
 ## Evaluation Highlights
 
-- Six synthetic banking/enterprise documents in `data/sample_docs/`.
-- Forty-six evaluation questions in `data/eval/qa_eval_set.csv`.
-- Question types include fact lookup, policy lookup, product lookup, numeric thresholds, role responsibility, cross-document, and no-answer.
-- Reports include Hit@3, Hit@5, MRR, no-answer accuracy, citation rate, latency, grouped metrics, and failure reasons.
+- Synthetic benchmark: 6 synthetic banking/enterprise documents and 46 evaluation questions.
+- Public demo path: source registry and 20-question public university policy evaluation set for official documents placed in `data/public_docs/`.
+- Metrics include Hit@3, Hit@5, MRR, no-answer accuracy, citation rate, latency, grouped metrics, and per-question failure reasons.
+- Public real-document evaluation is intentionally not claimed complete unless official public documents are actually present locally.
 
 ## Main Limitations
 
-- Sample documents are synthetic and contain no confidential data.
-- MockProvider is deterministic and does not measure real LLM answer quality.
-- Evaluation uses local hashing embeddings if sentence-transformers is unavailable.
-- TXT files only expose page 1, so page-level evaluation is limited.
-- This is a portfolio prototype, not a production enterprise system.
+- This is a portfolio prototype, not a production enterprise deployment.
+- Synthetic documents are useful for reproducibility but do not represent the full complexity of enterprise document collections.
+- Public university policy demo documents are not committed by default; users must verify official URLs and place public documents locally.
+- MockProvider validates pipeline behavior but does not measure real LLM answer quality.
+- The public university policy demo is for real-document validation, not legal, academic, admissions, or student policy advice.
 
 ## Suggested Resume Bullet Points
 
-- Built an enterprise-style document RAG QA system with metadata-preserving ingestion, hybrid semantic/BM25 retrieval, source-grounded answers, no-answer handling, and SQLite query logging.
-- Designed a synthetic banking benchmark with 6 documents and 46 evaluation questions covering retrieval quality, citation behavior, and unsupported-question refusal.
-- Implemented evaluation reporting for Hit@3, Hit@5, MRR, no-answer accuracy, citation rate, latency, grouped metrics, and per-question failure analysis.
+- Built a Streamlit-based RAG portfolio prototype supporting synthetic benchmark evaluation and a public-document demo path with source-grounded retrieval, citations, no-answer handling, optional Chroma persistence, and configurable OpenAI-compatible LLM backends.
+- Implemented metadata-preserving PDF/DOCX/TXT ingestion, hybrid semantic/BM25 retrieval, SQLite query logging, and reproducible offline tests using MockProvider and deterministic embeddings.
+- Designed evaluation workflows measuring Hit@3, Hit@5, MRR, no-answer accuracy, citation rate, latency, and per-question failure reasons across answerable, cross-document, and no-answer scenarios.
 
 ## Suggested Interview Talking Points
 
-- Why hybrid retrieval is useful for enterprise documents with exact terms, codes, thresholds, and policy language.
-- How no-answer handling reduces unsupported answers.
-- Why evaluation should include no-answer cases and cross-document questions.
-- How MockProvider keeps the project reproducible while OpenAI mode can be used for stronger answer generation.
-- What would change for production: persistent vector store, reranker, access controls, real PDFs/OCR, deployment, monitoring, and human-labeled evaluation.
-
+- Why hybrid retrieval is useful for policy documents with exact terms, codes, dates, thresholds, and institutional language.
+- How no-answer handling and citation validation reduce unsupported answers.
+- Why MockProvider remains valuable for CI even when real LLM providers are supported.
+- How the public-document path improves credibility without committing copyrighted, private, or non-public files.
+- What would change for production: access controls, managed vector database, OCR, monitoring, permission-aware retrieval, larger human-labeled evaluation sets, and deployment hardening.

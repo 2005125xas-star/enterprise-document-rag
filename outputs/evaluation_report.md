@@ -41,27 +41,27 @@
 | MRR | 0.9878 |
 | No-answer accuracy | 1.0000 |
 | Citation rate | 1.0000 |
-| Average latency (ms) | 1.31 |
+| Average latency (ms) | 1.36 |
 
 ## Metrics By Question Type
 
 | Group | Questions | Answerable | Unanswerable | Hit@3 | Hit@5 | MRR | No-answer accuracy | Citation rate | Avg latency ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| cross_document | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 1.39 |
-| fact_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.29 |
-| no_answer | 5 | 0 | 5 | n/a | n/a | n/a | 1.0000 | 0.0000 | 1.30 |
-| numeric_threshold | 14 | 14 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.30 |
-| policy_lookup | 6 | 6 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.30 |
-| product_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.30 |
-| role_responsibility | 7 | 7 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.32 |
+| cross_document | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 1.36 |
+| fact_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.41 |
+| no_answer | 5 | 0 | 5 | n/a | n/a | n/a | 1.0000 | 0.0000 | 1.33 |
+| numeric_threshold | 14 | 14 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.35 |
+| policy_lookup | 6 | 6 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.32 |
+| product_lookup | 4 | 4 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.40 |
+| role_responsibility | 7 | 7 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.36 |
 
 ## Metrics By Difficulty
 
 | Group | Questions | Answerable | Unanswerable | Hit@3 | Hit@5 | MRR | No-answer accuracy | Citation rate | Avg latency ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| easy | 26 | 26 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.30 |
-| hard | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 1.39 |
-| medium | 14 | 9 | 5 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.30 |
+| easy | 26 | 26 | 0 | 1.0000 | 1.0000 | 1.0000 | n/a | 1.0000 | 1.36 |
+| hard | 6 | 6 | 0 | 1.0000 | 1.0000 | 0.9167 | n/a | 1.0000 | 1.36 |
+| medium | 14 | 9 | 5 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.35 |
 
 ## Successful Examples
 

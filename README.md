@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/2005125xas-star/enterprise-document-rag/actions/workflows/ci.yml/badge.svg)
 
-Source-grounded question answering for synthetic enterprise banking documents, with document ingestion, hybrid retrieval, citations, no-answer handling, query logging, evaluation, optional Chroma persistence, optional CrossEncoder reranking, and OpenAI-compatible LLM support.
+Source-grounded question answering for synthetic enterprise banking documents and a public university policy demo path, with document ingestion, hybrid retrieval, citations, no-answer handling, query logging, evaluation, optional Chroma persistence, optional CrossEncoder reranking, and OpenAI-compatible LLM support.
 
 **Python 3.11+ | Streamlit | RAG | Hybrid Retrieval | Chroma Optional | Reranker Optional | Evaluation | SQLite Logging**
 
@@ -12,7 +12,7 @@ Enterprise teams often need answers from policy, risk, product, operations, and 
 
 ## More Than A Basic PDF Chatbot
 
-This is not a single PDF prompt wrapper. Core logic is separated under `src/`, while Streamlit orchestrates ingestion, indexing, retrieval, QA, evaluation, and logs. The system includes metadata-preserving chunking, semantic plus BM25 hybrid retrieval, source-grounded answer generation, explicit no-answer behavior, SQLite logging, a 46-question synthetic benchmark, and tests that do not require real API keys or model downloads.
+This is not a single PDF prompt wrapper. Core logic is separated under `src/`, while Streamlit orchestrates ingestion, indexing, retrieval, QA, evaluation, and logs. The system includes metadata-preserving chunking, semantic plus BM25 hybrid retrieval, source-grounded answer generation, explicit no-answer behavior, SQLite logging, a 46-question synthetic benchmark, a public real-document demo path, and tests that do not require real API keys or model downloads.
 
 ## Recommended Local Setup
 
@@ -126,6 +126,8 @@ enterprise-document-rag/
 │   ├── raw_docs/
 │   ├── processed/
 │   ├── eval/
+│   ├── public_docs/
+│   ├── public_eval/
 │   ├── logs/
 │   └── vector_store/
 ├── src/
@@ -142,6 +144,9 @@ enterprise-document-rag/
 ├── outputs/
 │   ├── eval_results.csv
 │   ├── evaluation_report.md
+│   ├── public_eval_results.csv
+│   ├── public_evaluation_report.md
+│   ├── public_real_document_demo_transcript.md
 │   └── demo_transcript.md
 ├── Dockerfile
 ├── README.md
@@ -289,7 +294,18 @@ docker run --rm -p 8501:8501 \
 
 The Docker image defaults to safe offline mode: `LLM_PROVIDER=mock`, `VECTOR_STORE=memory`, and `RERANKER_ENABLED=false`.
 
-## Run Evaluation
+## Evaluation Modes
+
+The project has two evaluation paths:
+
+- Synthetic enterprise benchmark: committed synthetic banking documents and 46 questions for reproducible testing.
+- Public real-document demo: a scaffold for official public university policy documents that the user downloads manually into `data/public_docs/`.
+
+MockProvider is intentionally kept for CI, offline testing, and retrieval/no-answer/citation validation. It does not evaluate real LLM answer quality. For qualitative answer review, run the app with a real OpenAI-compatible provider and review outputs manually.
+
+Retrieval/no-answer/citation evaluation checks whether the right documents are retrieved, whether unsupported questions are refused, and whether answered responses contain citations. Real LLM answer-quality evaluation is a separate task that should use public or permissioned documents, a real provider, and human-reviewed expected answers.
+
+## Run Synthetic Evaluation
 
 The evaluation CLI uses the synthetic benchmark in `data/sample_docs/` and `data/eval/qa_eval_set.csv`. It uses mock mode and local embeddings so it can run without a real LLM API key.
 
@@ -344,6 +360,32 @@ Recent local benchmark metrics:
 | Citation rate | 1.0000 |
 
 Evaluation matters because a RAG project should be judged on retrieval quality, citation behavior, and refusal behavior, not only on fluent-looking answers.
+
+## Public Real Document Demo
+
+The public demo upgrades the project beyond synthetic-only testing by providing a path for real public university policy documents. The repository includes:
+
+- `data/public_docs/`: empty by default except `.gitkeep`.
+- `data/public_eval/public_sources.yaml`: source registry with intended public university policy sources.
+- `data/public_eval/university_policy_eval_set.csv`: around 20 retrieval/no-answer questions.
+- `src/evaluation/run_public_eval.py`: public-document evaluation runner.
+- `outputs/public_real_document_demo_transcript.md`: transcript template and instructions.
+
+Only place publicly available documents here. Do not upload private coursework, VLE/Moodle/Learning Mall/Canvas files, internal university documents, or copyrighted materials without permission.
+
+The intended source registry includes public policy documents from UCL and the University of Liverpool, such as UCL Academic Manual chapters and Liverpool assessment, academic integrity, and attendance policies. Verify official URLs in `data/public_eval/public_sources.yaml` before downloading. If a source URL is marked `TODO_OFFICIAL_URL`, fill it from the official university website before use.
+
+Public documents are not committed by default. Prefer downloading official public PDFs or converting official public web pages to TXT locally, then saving them with the listed `local_filename` values under `data/public_docs/`.
+
+Run public evaluation:
+
+```bash
+python -m src.evaluation.run_public_eval
+```
+
+If no supported public documents are present, the runner exits cleanly with instructions and does not fabricate results. If some expected files are missing, it reports the missing `local_filename` values and continues with any supported documents that are present.
+
+The public university policy demo is intended for real-document validation of retrieval, citations, and refusal behavior. It is not legal, academic, admissions, or student policy advice.
 
 ## Demo Screenshots
 
